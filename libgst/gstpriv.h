@@ -482,7 +482,7 @@ extern OOP _gst_nil_oop
 #define BYTES_TO_SIZE(bytes) \
   ((bytes) / sizeof (PTR))
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__EMSCRIPTEN__)
 #define no_opt(x)	({ __typeof__ ((x)) _result; \
 			 asm ("" : "=r" (_result) : "0" ((x))); _result; })
 #define barrier()       asm ("")

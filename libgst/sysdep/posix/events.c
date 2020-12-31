@@ -362,6 +362,7 @@ _gst_pause (void)
   waiting_thread = pthread_self ();
 #endif
   _gst_disable_interrupts (false);
+#ifndef __EMSCRIPTEN__
   if (!_gst_have_pending_async_calls ())
     {
       /* We use sigsuspend to atomically replace the mask.  pause does
@@ -370,6 +371,7 @@ _gst_pause (void)
       sigemptyset (&set);
       sigsuspend (&set);
     }
+#endif
 #ifdef USE_POSIX_THREADS
   waiting_thread = 0;
 #endif

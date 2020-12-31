@@ -50,6 +50,7 @@
  *
  ***********************************************************************/
 
+#ifndef __EMSCRIPTEN__
 #include <float.h>
 
 #include "mathl.h"
@@ -77,3 +78,4 @@ lrint(double x)
 
   return (long) y;
 }
+#endif

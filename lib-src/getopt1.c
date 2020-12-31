@@ -52,6 +52,10 @@
 #endif
 #endif
 
+#ifdef __EMSCRIPTEN__
+#define ELIDE_CODE
+#endif
+
 #ifndef ELIDE_CODE
 
 

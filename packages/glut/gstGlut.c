@@ -388,7 +388,9 @@ static void registerCallbacks ()
   glutDialsFunc(gst_glut_DialsFunc);
   glutTabletMotionFunc(gst_glut_TabletMotionFunc);
   glutTabletButtonFunc(gst_glut_TabletButtonFunc);
+#ifndef __EMSCRIPTEN__
   glutWMCloseFunc(gst_glut_WMCloseFunc);
+#endif
 
 #if 0
   glutJoystickFunc(gst_glut_JoystickFunc);

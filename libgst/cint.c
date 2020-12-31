@@ -112,7 +112,9 @@ typedef struct gst_ffi_closure
   // This field must come first, since the address of this field will
   // be the same as the address of the overall structure.  This is due
   // to disabling interior pointers in the GC.
+#if FFI_CLOSURES
   ffi_closure closure;
+#endif
   void *address;
   OOP callbackOOP;
   ffi_cif cif;
@@ -1500,8 +1502,10 @@ _gst_make_closure (OOP callbackOOP)
   desc = (gst_c_callable) OOP_TO_OBJ (callbackOOP);
   numArgs = NUM_INDEXABLE_FIELDS (desc->argTypesOOP);
   argTypes = OOP_TO_OBJ (desc->argTypesOOP)->data;
+#if FFI_CLOSURES
   closure = (gst_ffi_closure *) ffi_closure_alloc (
     sizeof (gst_ffi_closure) + sizeof(ffi_type *) * (numArgs - 1), &code);
+#endif
 
   closure->address = closure;
   closure->callbackOOP = callbackOOP;
@@ -1512,8 +1516,10 @@ _gst_make_closure (OOP callbackOOP)
   ffi_prep_cif (&closure->cif, FFI_DEFAULT_ABI,
 		numArgs, closure->return_type, closure->arg_types);
 
+#if FFI_CLOSURES
   ffi_prep_closure_loc (&closure->closure, &closure->cif, closure_msg_send,
 			closure, code);
+#endif
   set_cobject_value (callbackOOP, code);
 }
 
@@ -1521,7 +1527,9 @@ void
 _gst_free_closure (OOP callbackOOP)
 {
   gst_ffi_closure *exec_closure = cobject_value (callbackOOP);
+#if FFI_CLOSURES
   ffi_closure_free (exec_closure->address); 
+#endif
   set_cobject_value (callbackOOP, NULL);
 }
 

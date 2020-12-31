@@ -79,12 +79,14 @@ getdtablesize(void)
 #endif
 
 #ifdef RLIMIT_NOFILE           /* who is non POSIX but has this? */
+#ifndef __EMSCRIPTEN__         /* emscripten, that's who */
   struct rlimit res;
   if (tableSize >= 0)
     return tableSize;
 
   if (getrlimit(RLIMIT_NOFILE, &rlimit) != -1)
     tableSize = rlimit.rlim_max;
+#endif
 #endif
 
   if (tableSize >= 0)

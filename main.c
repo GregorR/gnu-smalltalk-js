@@ -412,6 +412,7 @@ main(int argc, const char **argv)
 	}
     }
 
+#ifndef __EMSCRIPTEN__
   if (n_loaded_files == 0)
     gst_process_stdin (stdin_prompt);
 
@@ -423,5 +424,6 @@ main(int argc, const char **argv)
 
   gst_invoke_hook (GST_ABOUT_TO_QUIT);
   exit (0);
+#endif
 }
 
