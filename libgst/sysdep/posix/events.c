@@ -51,6 +51,10 @@
  ***********************************************************************/
 
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include "gstpriv.h"
 #include "lock.h"
 
@@ -451,6 +455,12 @@ _gst_async_file_polling (int fd,
   return (result);
 }
 
+#ifdef __EMSCRIPTEN__
+EM_JS(void, async_stdin_wait, (), {
+  return Asyncify.handleAsync(Module.stdinWaitF);
+});
+#endif
+
 void
 _gst_wait_for_input (int fd)
 {
@@ -464,6 +474,10 @@ _gst_wait_for_input (int fd)
   do
     {
       errno = 0;
+#ifdef __EMSCRIPTEN__
+      if (fd == 0)
+        return async_stdin_wait();
+#endif
       result = poll (&pfd, 1, -1); /* Infinite wait */
     }
   while ((result == 0 && (pfd.revents & POLLHUP) == 0)

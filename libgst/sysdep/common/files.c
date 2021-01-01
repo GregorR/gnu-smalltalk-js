@@ -56,6 +56,10 @@
  ***********************************************************************/
 
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include "gstpriv.h"
 
 #ifdef HAVE_UTIME_H
@@ -389,6 +393,12 @@ _gst_send (int fd,
 #endif
 }
 
+#ifdef __EMSCRIPTEN__
+EM_JS(ssize_t, async_stdin_read, (char *buf, size_t count), {
+    return Asyncify.handleAsync(function() { return Module.stdinReadF(buf, count); });
+});
+#endif
+
 ssize_t
 _gst_read (int fd,
 	   PTR buffer,
@@ -399,6 +409,11 @@ _gst_read (int fd,
 
   do
     {
+#ifdef __EMSCRIPTEN__
+      if (fd == 0)
+        result = async_stdin_read (buffer, size);
+      else
+#endif
       result = read (fd, buffer, size);
       if (errno == EFAULT)
         abort ();
